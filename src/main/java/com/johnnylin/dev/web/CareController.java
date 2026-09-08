@@ -9,13 +9,14 @@ import java.util.*;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class CareController {
-    private final CareService care;private final GeoService geo;private final StatisticsService stats;
+    private final CareService care;private final GeoService geo;private final StatisticsService stats;private final DeviceAccessService deviceAccess;
     @GetMapping("/regions") Api<?> regions(){return Api.ok(care.regions());}
     @GetMapping("/elders") Api<?> elders(@RequestParam(required=false)Long regionId,@RequestParam(required=false)String keyword,@RequestParam(required=false)String status,@RequestParam(defaultValue="1")int page,@RequestParam(defaultValue="20")int size){return Api.ok(care.elders(regionId,keyword,status,page,size));}
     @GetMapping("/elders/{id}") Api<?> elder(@PathVariable Long id){return Api.ok(care.elder(id));}
     @PostMapping("/elders") Api<?> elder(@RequestBody Map<String,Object>b){return Api.ok(care.saveElder(null,b));}
     @PutMapping("/elders/{id}") Api<?> elder(@PathVariable Long id,@RequestBody Map<String,Object>b){return Api.ok(care.saveElder(id,b));}
     @PostMapping("/elders/{id}/archive") Api<?> archive(@PathVariable Long id){care.archive(id);return Api.ok(null);}
+    @DeleteMapping("/elders/{id}") Api<?> deleteElder(@PathVariable Long id){care.deleteElder(id);return Api.ok(null);}
     @GetMapping("/doctors") Api<?> doctors(@RequestParam(defaultValue="1")int page,@RequestParam(defaultValue="20")int size){return Api.ok(care.doctors(page,size));}
     @PostMapping("/doctors") Api<?> doctor(@RequestBody Map<String,Object>b){return Api.ok(care.saveDoctor(null,b));}
     @PutMapping("/doctors/{id}") Api<?> doctor(@PathVariable Long id,@RequestBody Map<String,Object>b){return Api.ok(care.saveDoctor(id,b));}
@@ -35,6 +36,7 @@ public class CareController {
     @PutMapping("/devices/{id}") Api<?> device(@PathVariable Long id,@RequestBody Map<String,Object>b){return Api.ok(geo.saveDevice(id,b));}
     @PostMapping("/devices/{id}/bind") Api<?> bind(@PathVariable Long id,@RequestBody Map<String,Object>b){Input.keys(b,"elderId");return Api.ok(geo.bind(id,Input.id(b,"elderId")));}
     @PostMapping("/devices/{id}/unbind") Api<?> unbind(@PathVariable Long id){geo.unbind(id);return Api.ok(null);}
+    @PostMapping("/devices/{id}/credential") Api<?> credential(@PathVariable Long id){return Api.ok(deviceAccess.rotate(id));}
     @GetMapping("/devices/distribution") Api<?> distribution(@RequestParam(required=false)Long regionId,@RequestParam(required=false)String status){return Api.ok(geo.distribution(regionId,status));}
     @GetMapping("/geofences") Api<?> fences(){return Api.ok(geo.fences());}
     @PostMapping("/geofences") Api<?> fence(@RequestBody Map<String,Object>b){return Api.ok(geo.saveFence(null,b));}

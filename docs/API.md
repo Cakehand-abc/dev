@@ -1,6 +1,6 @@
 # 接口说明
 
-版本 V1.0。前缀 `/api/v1`，JSON UTF-8，同源 Session 认证。以下以实际 Controller 与 Service 为准。
+版本 V1.1。后台业务接口前缀 `/api/v1`，真实设备接入接口前缀 `/api/device/v1`，JSON UTF-8。以下以实际 Controller 与 Service 为准。
 
 ## 认证和响应
 
@@ -21,7 +21,9 @@ Long 类型（主键和部分计数）输出为字符串。时间输出带 `+08:
 
 ## 权限
 
-除获取 CSRF 与登录外，业务查询要求认证。ADMIN 与 OPERATOR 可写业务，ANALYST 只读。`/users` 和 `/demo` 仅 ADMIN 可访问。所有写入要求 CSRF，不能通过隐藏按钮替代后端鉴权。
+除获取 CSRF 与登录外，后台业务查询要求认证。ADMIN 与 OPERATOR 可写业务，ANALYST 只读。`/users`、`/demo`、设备密钥签发和老人误录删除仅 ADMIN 可访问。后台写入要求 CSRF，不能通过隐藏按钮替代后端鉴权。
+
+`/api/device/v1/**` 不使用浏览器 Session 或 CSRF。设备在 `X-Device-Key` 请求头携带独立密钥，服务端仅保存 SHA-256 摘要。密钥由管理员在腕表分布页面签发或轮换，只显示一次。生产传输必须使用 HTTPS。
 
 ## 端点目录
 
@@ -31,6 +33,7 @@ Long 类型（主键和部分计数）输出为字符串。时间输出带 `+08:
 | GET POST | /elders | 老人分页、新增 |
 | GET PUT | /elders/{id} | 老人详情、更新 |
 | POST | /elders/{id}/archive | 归档并关闭绑定、监测，取消待随访 |
+| DELETE | /elders/{id} | 仅管理员删除无任何业务关系的误录档案 |
 | GET POST | /doctors | 医生分页、新增 |
 | PUT | /doctors/{id} | 医生更新 |
 | GET POST | /health-records | 检测记录分页、录入 |
@@ -46,6 +49,7 @@ Long 类型（主键和部分计数）输出为字符串。时间输出带 `+08:
 | PUT | /devices/{id} | 设备更新 |
 | POST | /devices/{id}/bind | 绑定老人 |
 | POST | /devices/{id}/unbind | 结束有效绑定 |
+| POST | /devices/{id}/credential | 管理员签发或轮换设备接入密钥，仅显示一次 |
 | GET | /devices/distribution | 设备、绑定人、状态及最后定位 |
 | GET POST | /geofences | 围栏列表、新增 |
 | PUT | /geofences/{id} | 更新围栏并重置监测 |
@@ -57,7 +61,10 @@ Long 类型（主键和部分计数）输出为字符串。时间输出带 `+08:
 | PUT | /users/{id} | 更新显示名、角色及启用状态 |
 | POST | /users/{id}/reset-password | 重置密码并使旧认证失效 |
 | POST | /demo/locations | 单条模拟定位，仅 demo profile |
+| POST | /demo/locations/batch | 1～500 条模拟定位，仅 demo profile |
 | POST | /demo/heartbeats | 单条模拟心跳，仅 demo profile |
+| POST | /api/device/v1/locations | 真实设备批量定位，使用 X-Device-Key |
+| POST | /api/device/v1/heartbeats | 真实设备心跳，使用 X-Device-Key |
 
 ## 查询参数
 
@@ -96,6 +103,7 @@ Long 类型（主键和部分计数）输出为字符串。时间输出带 `+08:
 | 账号更新 | displayName、role、enabled；username 不可改，password 走单独重置接口 |
 | 密码重置 | password，至少 12 字符、不超过 72 UTF-8 字节 |
 | 模拟定位 | deviceId、eventId、longitude、latitude、recordedAt |
+| 批量定位 | deviceId、points；每个点含 eventId、longitude、latitude、recordedAt，最多 500 点 |
 | 模拟心跳 | deviceId、eventId、recordedAt |
 
 未列出的输入字段将被拒绝。新增和更新都提交完整业务字段；更新不是 PATCH。出生日期和电话可以置空。编辑界面原样提交脱敏电话时，后端保留原号码。
@@ -132,12 +140,34 @@ Long 类型（主键和部分计数）输出为字符串。时间输出带 `+08:
 {"deviceId":"1","eventId":"demo-point-unique-001","longitude":120.17,"latitude":30.25,"recordedAt":"2026-09-07T09:00:00+08:00"}
 ```
 
+设备批量定位：
+
+```http
+POST /api/device/v1/locations
+Content-Type: application/json
+X-Device-Key: scd_签发后仅显示一次的密钥
+```
+
+```json
+{
+  "deviceId":"1",
+  "points":[
+    {"eventId":"gps-20260908-0001","longitude":120.1601,"latitude":30.2501,"recordedAt":"2026-09-08T09:00:00+08:00"},
+    {"eventId":"gps-20260908-0002","longitude":120.1602,"latitude":30.2502,"recordedAt":"2026-09-08T09:01:00+08:00"}
+  ]
+}
+```
+
+成功结果包含 `received`、`accepted`、`duplicates`、`firstRecordedAt` 和 `lastRecordedAt`。批次中任一点不合法时整个批次回滚。
+
 ## 状态和重试语义
 
 - 老人 ACTIVE 可维护，ARCHIVED 保留历史且不能编辑。
 - 随访 PENDING 可完成或取消，COMPLETED/CANCELED 不再重复操作；计划结果唯一。
 - 围栏半径 50～5000 米，球面距离大于半径为外部，边界在内。连续在外只一条事件，返回后再离开新建事件。
 - 相同设备与 eventId 的相同定位重传返回原记录；改内容返回 409。历史点按发生时绑定归属，不污染新绑定人。
-- 心跳只前进不回退；eventId 必填但当前不保存独立心跳事件表，不宣称心跳事件的持久化去重。
+- 心跳只前进不回退；相同设备和 eventId 的相同心跳可安全重传，不同内容返回 409。
+- 老人档案只有在健康、随访、设备绑定、定位及围栏关系均为零时才可物理删除；已有历史只能归档。
+- 设备密钥轮换后旧密钥立即失效。定位和心跳以设备内唯一 eventId 实现持久化幂等。
 - 人工处理和实际返回分别记录。没有返回证据时，处理不能伪造 returnedAt。
 - 409 要刷新状态再操作，不自动覆盖版本。普通新增没有统一的幂等请求中间件，网络超时后先查业务编码或事件标识再重试。

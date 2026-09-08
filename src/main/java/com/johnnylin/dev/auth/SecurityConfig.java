@@ -39,10 +39,12 @@ public class SecurityConfig {
     }
     @Bean SecurityFilterChain chain(HttpSecurity http,UserMapper users,SecurityContextRepository contexts,CsrfTokenRepository csrf)throws Exception{
         http.securityContext(c->c.securityContextRepository(contexts))
-            .csrf(c->c.csrfTokenRepository(csrf))
+            .csrf(c->c.csrfTokenRepository(csrf).ignoringRequestMatchers("/api/device/**"))
             .authorizeHttpRequests(a->a
                 .requestMatchers("/","/index.html","/assets/**","/favicon.svg","/api/v1/auth/csrf","/api/v1/auth/login","/error").permitAll()
-                .requestMatchers("/api/v1/users/**","/api/v1/demo/**").hasRole("ADMIN")
+                .requestMatchers("/api/device/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE,"/api/v1/elders/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/users/**","/api/v1/demo/**","/api/v1/devices/*/credential").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET,"/api/**").authenticated()
                 .requestMatchers("/api/v1/auth/logout").authenticated()
                 .requestMatchers("/api/**").hasAnyRole("ADMIN","OPERATOR")

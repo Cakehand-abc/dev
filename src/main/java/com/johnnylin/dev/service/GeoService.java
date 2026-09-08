@@ -21,6 +21,7 @@ import static com.johnnylin.dev.service.CareService.required;
 public class GeoService {
     private final DeviceMapper devices; private final BindingMapper bindings; private final ElderMapper elders;
     private final LocationMapper locations; private final FenceMapper fences; private final FenceMemberMapper members; private final UserMapper users;
+    private final HeartbeatEventMapper heartbeatEvents;
     private final FenceStateMapper states; private final AlertMapper alerts; private final AuditMapper audits; private final ObjectMapper json;
     @Value("${app.online-minutes:5}") private int onlineMinutes;
     @Value("${app.clock-skew-seconds:60}") private int skewSeconds;
@@ -28,6 +29,10 @@ public class GeoService {
     // Suitable for the single-unit teaching deployment; partition locks before high-throughput hardware ingestion.
     private void lockMonitoring(){users.selectList(new QueryWrapper<User>().orderByAsc("id").last("LIMIT 1 FOR UPDATE"));fences.selectList(new QueryWrapper<Fence>().orderByAsc("id").last("FOR UPDATE"));}
     private void audit(String action,String type,Long id){var a=new Audit();a.setUserId(CareService.actor());a.setAction(action);a.setTargetType(type);a.setTargetId(id);a.setOccurredAt(now());a.setResult("SUCCESS");audits.insert(a);}
+    public void auditDeviceAction(String action,Long id){audit(action,"watch_device",id);}
+    public long bindingCountForElder(Long elderId){return bindings.selectCount(new QueryWrapper<Binding>().eq("elder_id",elderId));}
+    public long locationCountForElder(Long elderId){return locations.selectCount(new QueryWrapper<Location>().eq("elder_id",elderId));}
+    public long fenceMembershipCountForElder(Long elderId){return members.selectCount(new QueryWrapper<FenceMember>().eq("elder_id",elderId));}
     private Elder active(Long id){var e=required(elders.lock(id));if(!"ACTIVE".equals(e.getStatus()))throw Api.conflict("老人已归档");return e;}
     private static double coordinate(Map<String,Object>b,String name,double low,double high){return BigDecimal.valueOf(number(b,name,low,high)).setScale(7,RoundingMode.HALF_UP).doubleValue();}
     public static double distance(double lon1,double lat1,double lon2,double lat2){
@@ -129,8 +134,35 @@ public class GeoService {
         }return point;
     }
     @Transactional
-    public Device heartbeat(Map<String,Object>b){keys(b,"deviceId","eventId","recordedAt");text(b,"eventId",100);var stamp=time(b,"recordedAt");if(stamp.isAfter(now().plusSeconds(skewSeconds)))throw Api.bad("心跳时间超过允许偏差");
-        var d=required(devices.lock(id(b,"deviceId")));if(!d.getEnabled())throw Api.conflict("设备已停用");if(d.getLastSeenAt()==null||stamp.isAfter(d.getLastSeenAt())){d.setLastSeenAt(stamp);devices.updateById(d);}return d;}
+    @SuppressWarnings("unchecked")
+    public Map<String,Object> ingestBatch(Map<String,Object>b){
+        keys(b,"deviceId","points");Long deviceId=id(b,"deviceId");Object raw=b.get("points");
+        if(!(raw instanceof List<?> list)||list.isEmpty()||list.size()>500)throw Api.bad("points 必须包含 1 至 500 个定位点");
+        List<Map<String,Object>> validated=new ArrayList<>(list.size());
+        for(Object item:list){
+            if(!(item instanceof Map<?,?> source))throw Api.bad("定位点格式不正确");
+            Map<String,Object> point=new LinkedHashMap<>();source.forEach((k,v)->point.put(String.valueOf(k),v));
+            keys(point,"eventId","longitude","latitude","recordedAt");text(point,"eventId",100);coordinate(point,"longitude",-180,180);coordinate(point,"latitude",-90,90);
+            if(time(point,"recordedAt").isAfter(now().plusSeconds(skewSeconds)))throw Api.bad("定位时间超过允许时钟偏差");
+            point.put("deviceId",deviceId);validated.add(point);
+        }
+        int accepted=0,duplicates=0;LocalDateTime first=null,last=null;
+        for(Map<String,Object> point:validated){
+            String eventId=text(point,"eventId",100);
+            boolean exists=locations.selectCount(new QueryWrapper<Location>().eq("device_id",deviceId).eq("event_id",eventId))>0;
+            Location saved=ingest(point);if(exists)duplicates++;else accepted++;
+            if(first==null||saved.getRecordedAt().isBefore(first))first=saved.getRecordedAt();
+            if(last==null||saved.getRecordedAt().isAfter(last))last=saved.getRecordedAt();
+        }
+        Map<String,Object> result=new LinkedHashMap<>();result.put("received",list.size());result.put("accepted",accepted);result.put("duplicates",duplicates);result.put("firstRecordedAt",first);result.put("lastRecordedAt",last);return result;
+    }
+    @Transactional
+    public Device heartbeat(Map<String,Object>b){keys(b,"deviceId","eventId","recordedAt");Long deviceId=id(b,"deviceId");String eventId=text(b,"eventId",100);var stamp=time(b,"recordedAt");if(stamp.isAfter(now().plusSeconds(skewSeconds)))throw Api.bad("心跳时间超过允许偏差");
+        var d=required(devices.lock(deviceId));if(!d.getEnabled())throw Api.conflict("设备已停用");
+        var duplicate=heartbeatEvents.selectOne(new QueryWrapper<HeartbeatEvent>().eq("device_id",deviceId).eq("event_id",eventId));
+        if(duplicate!=null){if(!duplicate.getRecordedAt().equals(stamp))throw Api.conflict("同一心跳事件编号的内容不一致");return d;}
+        var event=new HeartbeatEvent();event.setDeviceId(deviceId);event.setEventId(eventId);event.setRecordedAt(stamp);event.setReceivedAt(now());heartbeatEvents.insert(event);
+        if(d.getLastSeenAt()==null||stamp.isAfter(d.getLastSeenAt())){d.setLastSeenAt(stamp);devices.updateById(d);}return d;}
     public List<Location> trajectory(Long id,String start,String end){
         required(elders.selectById(id));if(start==null||end==null)throw Api.bad("请选择轨迹起止时间");var p=filters(null,start,end,id,null);
         if(Duration.between((LocalDateTime)p.get("start"),(LocalDateTime)p.get("end")).compareTo(Duration.ofHours(24))>0)throw Api.bad("单次轨迹查询不能超过 24 小时");

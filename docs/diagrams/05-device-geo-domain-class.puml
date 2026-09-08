@@ -1,0 +1,78 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Microsoft YaHei
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classBorderColor #294B63
+skinparam classBackgroundColor #F7FAFC
+skinparam ArrowColor #294B63
+hide methods
+
+class Elder
+class Device {
+  id: Long
+  serialNo: String
+  enabled: Boolean
+  lastSeenAt: LocalDateTime
+}
+class DeviceCredential {
+  deviceId: Long
+  keyHash: String
+  rotatedAt: LocalDateTime
+}
+class HeartbeatEvent {
+  deviceId: Long
+  eventId: String
+  recordedAt: LocalDateTime
+}
+class Binding {
+  deviceId: Long
+  elderId: Long
+  boundAt: LocalDateTime
+  unboundAt: LocalDateTime
+}
+class Location {
+  deviceId: Long
+  elderId: Long
+  bindingId: Long
+  eventId: String
+  longitude: Double
+  latitude: Double
+  recordedAt: LocalDateTime
+}
+class Fence {
+  centerLon: Double
+  centerLat: Double
+  radiusM: Integer
+  enabled: Boolean
+}
+class FenceMember
+class FenceState {
+  inside: Boolean
+  lastRecordedAt: LocalDateTime
+  activeAlertId: Long
+}
+class Alert {
+  triggeredAt: LocalDateTime
+  returnedAt: LocalDateTime
+  handledAt: LocalDateTime
+}
+
+Device "1" *-- "1" DeviceCredential
+Device "1" *-- "0..*" HeartbeatEvent
+Device "1" <-- "0..*" Binding
+Elder "1" <-- "0..*" Binding
+Binding "1" <-- "0..*" Location
+Device "1" <-- "0..*" Location
+Elder "1" <-- "0..*" Location
+Fence "1" <-- "0..*" FenceMember
+Elder "1" <-- "0..*" FenceMember
+FenceMember "1" *-- "1" FenceState
+FenceMember "1" <-- "0..*" Alert
+Location "1" <-- "0..1" Alert : exit_point_id
+
+note bottom of Location
+  device_id + event_id 唯一
+  历史定位归属绑定发生时的老人
+end note
+@enduml

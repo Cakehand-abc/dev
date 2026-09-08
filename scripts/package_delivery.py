@@ -10,6 +10,7 @@ for folder in ['.mvn','src','frontend','database','scripts','docs']:
   if not p.is_file():continue
   rel=p.relative_to(root);parts=rel.parts
   if any(x in parts for x in ['node_modules','dist','.qa','__pycache__','review']):continue
+  if any(x.startswith('deliverables_') for x in parts) or p.name.startswith('~$'):continue
   if str(rel).replace('\\','/').startswith('src/main/resources/static/'):continue
   if p.name=='trajectory-debug.png':continue
   selected.append(p)
@@ -19,7 +20,7 @@ if private.exists():
  secrets=[v.encode() for k,v in json.loads(private.read_text(encoding='utf-8-sig')).items() if ('PASSWORD' in k) and isinstance(v,str) and v]
  for p in selected:
   if any(secret in p.read_bytes() for secret in secrets):raise RuntimeError('Private credential detected in selected delivery file: '+str(p.relative_to(root)))
-package=out/'smart-care-v1.0.zip'
+package=out/'smart-care-v1.1.zip'
 with zipfile.ZipFile(package,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
  for p in sorted(selected):z.write(p,Path('smart-care')/p.relative_to(root))
 with zipfile.ZipFile(package) as z:

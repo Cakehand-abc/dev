@@ -1,0 +1,38 @@
+@startuml
+skinparam defaultFontName Microsoft YaHei
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam sequenceArrowColor #294B63
+skinparam participantBorderColor #294B63
+skinparam participantBackgroundColor #EAF5F3
+
+actor "腕表或设备网关" as Device
+participant "DeviceIngestController" as Controller
+participant "DeviceAccessService" as Access
+participant "GeoService" as Geo
+database "MySQL" as DB
+
+Device -> Controller: POST /api/device/v1/locations\nX-Device-Id + X-Device-Key + eventId
+Controller -> Access: 校验设备状态与密钥摘要
+Access -> DB: 查询设备与 key_hash
+DB --> Access: 设备身份
+Access --> Controller: 认证通过
+Controller -> Geo: ingestDeviceLocation(deviceId, payload)
+Geo -> DB: 按 deviceId + eventId 查重
+alt 同事件同内容重传
+  DB --> Geo: 已存在定位点
+  Geo --> Controller: 返回既有结果
+else 同事件不同内容
+  Geo --> Controller: 409 冲突
+else 新定位事件
+  Geo -> DB: 查发生时有效绑定并写 location_point
+  Geo -> DB: 锁定围栏监测状态并计算球面距离
+  alt 首次越界
+    Geo -> DB: 创建 geofence_alert 并更新 active_alert_id
+  else 返回围栏
+    Geo -> DB: 写 returned_at 并复位状态
+  end
+  Geo --> Controller: 定位和告警处理结果
+end
+Controller --> Device: 200 或明确错误码
+@enduml

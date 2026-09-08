@@ -1,0 +1,51 @@
+{
+  "runAt": "2026-09-08T16:26:49.243652+08:00",
+  "baseUrl": "http://127.0.0.1:18081",
+  "database": "MySQL 8.0.46 / isolated port 13317 / 18 tables",
+  "checks": [
+    {
+      "name": "管理员批量模拟轨迹并保持幂等",
+      "passed": true,
+      "milliseconds": 86.13,
+      "detail": {
+        "accepted": 12,
+        "duplicatesOnReplay": 12
+      }
+    },
+    {
+      "name": "管理员可删除无业务关系的误录档案",
+      "passed": true,
+      "milliseconds": 70.78,
+      "detail": {
+        "deletedId": "121"
+      }
+    },
+    {
+      "name": "有关联档案拒绝物理删除",
+      "passed": true,
+      "milliseconds": 30.23,
+      "detail": {
+        "status": 409,
+        "message": "该档案已有健康、随访、设备、定位或围栏业务记录，只能归档，不能删除"
+      }
+    },
+    {
+      "name": "真实定位接口校验设备密钥并接收定位",
+      "passed": true,
+      "milliseconds": 29.23,
+      "detail": {
+        "missingKeyStatus": 401,
+        "accepted": 1
+      }
+    },
+    {
+      "name": "设备心跳持久幂等并拒绝冲突重放",
+      "passed": true,
+      "milliseconds": 48.93,
+      "detail": {
+        "replayAccepted": true,
+        "conflictingReplayStatus": 409
+      }
+    }
+  ]
+}

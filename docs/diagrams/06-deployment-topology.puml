@@ -1,0 +1,41 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Microsoft YaHei
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam nodeBorderColor #294B63
+skinparam nodeBackgroundColor #F7FAFC
+skinparam databaseBorderColor #294B63
+skinparam ArrowColor #294B63
+top to bottom direction
+
+node "管理端电脑" as AdminPC {
+  artifact "Chrome 或 Edge" as Browser
+}
+
+node "腕表或厂商设备网关" as WatchGateway {
+  artifact "GPS 与心跳客户端" as DeviceClient
+}
+
+node "应用服务器" as AppServer {
+  artifact "smart-care.jar" as Jar
+  component "Vue 静态资源" as VueStatic
+  component "Spring Boot 3.5.16" as Boot
+  VueStatic -down- Boot
+}
+
+database "MySQL 8\nsmart_care" as DB
+cloud "HTTPS 反向代理\n生产部署时配置" as Proxy
+
+Browser --> Proxy : HTTPS
+DeviceClient --> Proxy : HTTPS + X-Device-Key
+Proxy -down-> Jar : 8080 或内网端口
+Jar --> VueStatic
+Jar --> Boot
+Boot -down-> DB : JDBC
+
+note bottom of AppServer
+  交付态为同源单体部署
+  默认本地配置只监听 127.0.0.1
+end note
+@enduml

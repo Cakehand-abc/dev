@@ -68,6 +68,19 @@ public class CareService {
         plans.update(null,new UpdateWrapper<FollowupPlan>().eq("elder_id",id).eq("status","PENDING").set("status","CANCELED").set("canceled_at",now()).set("cancel_reason","老人归档").setSql("version = version + 1"));
         audit("ARCHIVE","elder",id);
     }
+    @Transactional
+    public void deleteElder(Long id){
+        Elder elder=required(elders.lock(id));
+        long healthCount=health.selectCount(new QueryWrapper<HealthRecord>().eq("elder_id",id));
+        long planCount=plans.selectCount(new QueryWrapper<FollowupPlan>().eq("elder_id",id));
+        long bindingCount=geo.bindingCountForElder(id);
+        long locationCount=geo.locationCountForElder(id);
+        long fenceCount=geo.fenceMembershipCountForElder(id);
+        long related=healthCount+planCount+bindingCount+locationCount+fenceCount;
+        if(related>0)throw Api.conflict("该档案已有健康、随访、设备、定位或围栏业务记录，只能归档，不能删除");
+        if(elders.deleteById(id)!=1)throw Api.conflict("档案删除失败，请刷新后重试");
+        audit("DELETE","elder",elder.getId());
+    }
     public Elder activeElder(Long id){Elder e=required(elders.selectById(id));if(!"ACTIVE".equals(e.getStatus()))throw Api.conflict("老人已归档");return e;}
     @SuppressWarnings("unchecked")
     public Map<String,Object> doctors(int page,int size){var out=page(doctors,new QueryWrapper<>(),page,size);((List<Doctor>)out.get("records")).forEach(this::masked);return out;}

@@ -5,51 +5,69 @@
   "springBoot": "3.5.16",
   "tests": [
     {
+      "name": "batchLocationIngestionAcceptsMultiplePoints",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.719,
+      "passed": true
+    },
+    {
+      "name": "onlyAdministratorCanDeleteElder",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.196,
+      "passed": true
+    },
+    {
       "name": "duplicateBindingIsRejected",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.456,
+      "seconds": 0.021,
       "passed": true
     },
     {
       "name": "completionIsAtomicAndCannotBeRepeated",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.029,
+      "seconds": 0.025,
       "passed": true
     },
     {
       "name": "realLoginAndLogoutInvalidateSession",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.255,
+      "seconds": 0.209,
       "passed": true
     },
     {
       "name": "productionDoesNotExposeDemoIngestion",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.022,
+      "seconds": 0.027,
+      "passed": true
+    },
+    {
+      "name": "heartbeatEventsAreDurablyIdempotent",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.02,
       "passed": true
     },
     {
       "name": "staleElderUpdateIsRejected",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.011,
+      "seconds": 0.016,
       "passed": true
     },
     {
       "name": "paginationAndMassAssignmentAreRejected",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.025,
+      "seconds": 0.029,
       "passed": true
     },
     {
       "name": "populationIncludesUnknownAndExcludesArchived",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.031,
+      "seconds": 0.041,
       "passed": true
     },
     {
       "name": "duplicateAndOutOfOrderPointsDoNotCorruptMonitoring",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.041,
+      "seconds": 0.054,
       "passed": true
     },
     {
@@ -61,79 +79,91 @@
     {
       "name": "trajectoryIsSortedAndRestricted",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.025,
+      "seconds": 0.03,
       "passed": true
     },
     {
       "name": "healthCountsPeopleAndRecordsSeparately",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.016,
+      "seconds": 0.022,
       "passed": true
     },
     {
       "name": "roleChangeInvalidatesExistingAuthentication",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.061,
+      "seconds": 0.078,
       "passed": true
     },
     {
       "name": "anonymousCannotReadData",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.008,
+      "seconds": 0.013,
       "passed": true
     },
     {
       "name": "distanceHasCorrectScale",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.011,
+      "seconds": 0.016,
       "passed": true
     },
     {
       "name": "noPlansHaveNoArtificialCompletionRate",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.013,
+      "seconds": 0.011,
+      "passed": true
+    },
+    {
+      "name": "authenticatedDeviceEndpointAcceptsKeyAndRejectsMissingKey",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.048,
       "passed": true
     },
     {
       "name": "heartbeatDoesNotMoveBackwards",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.01,
+      "seconds": 0.014,
       "passed": true
     },
     {
       "name": "invalidPasswordIsRejected",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.061,
+      "seconds": 0.073,
+      "passed": true
+    },
+    {
+      "name": "restrictedDeleteOnlyRemovesUnusedRecords",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.017,
       "passed": true
     },
     {
       "name": "csrfAndReadOnlyRoleAreEnforced",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.066,
+      "seconds": 0.076,
       "passed": true
     },
     {
       "name": "dashboardAndStatisticsContractsWork",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.026,
+      "seconds": 0.028,
       "passed": true
     },
     {
       "name": "lastAdministratorCannotBeDisabled",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.006,
+      "seconds": 0.01,
       "passed": true
     },
     {
       "name": "rebindingPreservesHistoricalOwner",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.013,
+      "seconds": 0.018,
       "passed": true
     },
     {
       "name": "persistentOutsideOnlyCreatesOneAlertAndReturnAllowsAnother",
       "class": "com.johnnylin.dev.BusinessTests",
-      "seconds": 0.029,
+      "seconds": 0.034,
       "passed": true
     },
     {

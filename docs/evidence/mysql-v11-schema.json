@@ -1,0 +1,19 @@
+{
+  "runAt": "2026-09-08T08:32:31.4855020Z",
+  "server": "MySQL 8.0.46",
+  "isolatedPort": 13317,
+  "freshSchema": {
+    "tableCount": 18,
+    "passed": true
+  },
+  "upgrade": {
+    "sourceTableCount": 16,
+    "targetTableCount": 18,
+    "newTables": [
+      "device_credential",
+      "device_heartbeat_event"
+    ],
+    "sentinelRegionPreserved": true,
+    "passed": true
+  }
+}

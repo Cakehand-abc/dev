@@ -1,0 +1,54 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Microsoft YaHei
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam packageBorderColor #294B63
+skinparam packageBackgroundColor #F7FAFC
+skinparam ArrowColor #294B63
+left to right direction
+
+package "auth 认证与授权" as auth {
+  class AuthController
+  class SecurityConfig
+  class AccountPrincipal
+}
+
+package "web 接口边界" as web {
+  class CareController
+  class DemoController
+  class DeviceIngestController
+}
+
+package "service 业务规则" as service {
+  class CareService
+  class StatisticsService
+  class GeoService
+  class DeviceAccessService
+}
+
+package "mapper 数据访问" as mapper {
+  interface "BaseMapper 子接口" as BaseMappers
+  interface StatisticsMapper
+}
+
+package "domain 领域对象" as domain {
+  class "档案 健康 随访" as CareDomain
+  class "设备 定位 围栏" as GeoDomain
+  class "账号 审计" as AccountDomain
+}
+
+package "config 初始化与序列化" as config {
+  class Bootstrap
+  class DemoSeeder
+  class JsonConfig
+}
+
+auth ..> service : 账号查询与认证版本
+web --> service
+service --> mapper
+mapper --> domain
+config ..> service : 演示数据初始化
+config ..> mapper
+@enduml

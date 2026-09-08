@@ -1,0 +1,47 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Microsoft YaHei
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam ArrowColor #294B63
+skinparam ActorBorderColor #294B63
+skinparam UsecaseBorderColor #2F6F73
+skinparam UsecaseBackgroundColor #EAF5F3
+left to right direction
+
+actor "系统管理员\nADMIN" as Admin
+actor "业务人员\nOPERATOR" as Operator
+actor "决策分析员\nANALYST" as Analyst
+actor "腕表或设备网关" as Device
+
+rectangle "智慧医养大数据决策分析系统" {
+  usecase "登录与退出" as UC_Login
+  usecase "查看首页和七类\n业务统计与空间视图" as UC_Read
+  usecase "维护档案 健康 随访\n设备绑定和围栏" as UC_Maintain
+  usecase "数据模拟\n与批量轨迹注入" as UC_Demo
+  usecase "GPS 与心跳上报" as UC_Gps
+  usecase "账号 设备密钥\n与误录档案删除" as UC_Account
+}
+
+Admin --> UC_Login
+Admin --> UC_Read
+Admin --> UC_Maintain
+Admin --> UC_Demo
+Admin --> UC_Account
+
+Operator --> UC_Login
+Operator --> UC_Read
+Operator --> UC_Maintain
+
+Analyst --> UC_Login
+Analyst --> UC_Read
+
+Device --> UC_Gps
+UC_Demo ..> UC_Maintain : <<extend>>
+UC_Gps ..> UC_Read : 更新腕表分布与轨迹
+
+note bottom of UC_Read
+  七类业务视图：人口、健康、随访、腕表分布、
+  电子围栏、轨迹回放，以及首页综合看板。
+end note
+@enduml

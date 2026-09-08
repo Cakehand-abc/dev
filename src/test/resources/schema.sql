@@ -49,6 +49,17 @@ CREATE TABLE watch_device (
  id BIGINT AUTO_INCREMENT PRIMARY KEY, serial_no VARCHAR(80) NOT NULL UNIQUE, model VARCHAR(80) NOT NULL,
  enabled BOOLEAN NOT NULL DEFAULT TRUE, last_seen_at DATETIME(6), version INT NOT NULL DEFAULT 0
 );
+CREATE TABLE device_credential (
+ device_id BIGINT PRIMARY KEY, key_hash CHAR(64) NOT NULL UNIQUE,
+ created_at DATETIME(6) NOT NULL, rotated_at DATETIME(6),
+ FOREIGN KEY (device_id) REFERENCES watch_device(id)
+);
+CREATE TABLE device_heartbeat_event (
+ id BIGINT AUTO_INCREMENT PRIMARY KEY, device_id BIGINT NOT NULL, event_id VARCHAR(100) NOT NULL,
+ recorded_at DATETIME(6) NOT NULL, received_at DATETIME(6) NOT NULL,
+ FOREIGN KEY (device_id) REFERENCES watch_device(id), UNIQUE(device_id,event_id)
+);
+CREATE INDEX ix_heartbeat_device_time ON device_heartbeat_event(device_id,recorded_at,id);
 CREATE TABLE device_binding (
  id BIGINT AUTO_INCREMENT PRIMARY KEY, device_id BIGINT NOT NULL, elder_id BIGINT NOT NULL,
  bound_at DATETIME(6) NOT NULL, unbound_at DATETIME(6), active_device_id BIGINT UNIQUE, active_elder_id BIGINT UNIQUE,
@@ -99,4 +110,3 @@ CREATE TABLE audit_log (
  target_id BIGINT, occurred_at DATETIME(6) NOT NULL, result VARCHAR(40) NOT NULL, FOREIGN KEY (user_id) REFERENCES sys_user(id)
 );
 CREATE INDEX ix_audit_user_time ON audit_log(user_id,occurred_at);
-

@@ -42,6 +42,7 @@ src/main/resources/static/
 .local/
 *.log
 docs/.qa/
+docs/deliverables_原始备份/
 
 # Local artifact packaging intermediates
 .chart-data-*/

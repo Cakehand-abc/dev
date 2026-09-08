@@ -1,0 +1,112 @@
+{
+  "runAt": "2026-09-08T14:59:34.474719+00:00",
+  "expectedDocuments": 10,
+  "actualDocuments": 10,
+  "allPassed": true,
+  "visualRender": {
+    "passed": false,
+    "reason": "LibreOffice soffice.exe and Microsoft Word are unavailable in this execution environment"
+  },
+  "documents": [
+    {
+      "file": "01 软件需求规范.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 46,
+      "tables": 10,
+      "nonEmptyParagraphs": 31,
+      "passed": true
+    },
+    {
+      "file": "02 数据库设计说明书.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 123,
+      "tables": 23,
+      "nonEmptyParagraphs": 79,
+      "passed": true
+    },
+    {
+      "file": "03 测试日志.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 33,
+      "tables": 8,
+      "nonEmptyParagraphs": 21,
+      "passed": true
+    },
+    {
+      "file": "04 系统架构设计说明书.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 76,
+      "tables": 6,
+      "nonEmptyParagraphs": 53,
+      "passed": true
+    },
+    {
+      "file": "05 测试用例.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 151,
+      "tables": 5,
+      "nonEmptyParagraphs": 136,
+      "passed": true
+    },
+    {
+      "file": "06 测试计划.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 26,
+      "tables": 5,
+      "nonEmptyParagraphs": 18,
+      "passed": true
+    },
+    {
+      "file": "07 项目例会纪要.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 26,
+      "tables": 7,
+      "nonEmptyParagraphs": 16,
+      "passed": true
+    },
+    {
+      "file": "08 系统详细设计说明书.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 43,
+      "tables": 7,
+      "nonEmptyParagraphs": 31,
+      "passed": true
+    },
+    {
+      "file": "10 项目组成员分工.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 27,
+      "tables": 6,
+      "nonEmptyParagraphs": 18,
+      "passed": true
+    },
+    {
+      "file": "11 项目部署环境说明书.docx",
+      "zipValid": true,
+      "hasMainDocument": true,
+      "versionV11Present": true,
+      "paragraphs": 53,
+      "tables": 7,
+      "nonEmptyParagraphs": 40,
+      "passed": true
+    }
+  ]
+}

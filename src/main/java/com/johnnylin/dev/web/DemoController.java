@@ -13,5 +13,6 @@ import java.util.*;
 public class DemoController {
     private final GeoService geo;
     @PostMapping("/locations") Api<?> location(@RequestBody Map<String,Object>b){return Api.ok(geo.ingest(b));}
+    @PostMapping("/locations/batch") Api<?> locations(@RequestBody Map<String,Object>b){return Api.ok(geo.ingestBatch(b));}
     @PostMapping("/heartbeats") Api<?> heartbeat(@RequestBody Map<String,Object>b){return Api.ok(geo.heartbeat(b));}
 }

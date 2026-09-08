@@ -1,0 +1,69 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Microsoft YaHei
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classBorderColor #294B63
+skinparam classBackgroundColor #F7FAFC
+skinparam ArrowColor #294B63
+hide methods
+
+class Region {
+  id: Long
+  code: String
+  name: String
+  parentId: Long
+}
+class Elder {
+  id: Long
+  name: String
+  gender: String
+  birthDate: LocalDate
+  status: String
+  version: Integer
+}
+class Doctor {
+  id: Long
+  name: String
+  department: String
+}
+class HealthRule {
+  id: Long
+  metric: String
+  lowerBound: Decimal
+  upperBound: Decimal
+  version: Integer
+}
+class HealthRecord {
+  id: Long
+  measuredAt: LocalDateTime
+  abnormal: Boolean
+  ruleSnapshot: String
+  eventId: String
+}
+class FollowupPlan {
+  id: Long
+  dueAt: LocalDateTime
+  status: String
+  version: Integer
+}
+class FollowupRecord {
+  id: Long
+  completedAt: LocalDateTime
+  content: String
+  result: String
+}
+
+Region "1" <-- "0..*" Elder : region_id
+Elder "1" <-- "0..*" HealthRecord : elder_id
+HealthRule ..> HealthRecord : 判定并保存规则快照
+Elder "1" <-- "0..*" FollowupPlan : elder_id
+Doctor "1" <-- "0..*" FollowupPlan : doctor_id
+FollowupPlan "1" <-- "0..1" FollowupRecord : plan_id 唯一
+
+note right of Elder
+  归档后不进入人口统计
+  不提供恢复操作
+  有业务关系时禁止物理删除
+end note
+@enduml

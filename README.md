@@ -1,14 +1,15 @@
 # 智慧医养大数据决策分析系统
 
-面向医养服务管理人员的课程项目。包含登录、首页、人口统计、健康检测统计、医生随访统计、腕表分布、电子围栏和轨迹回放，并提供老人、医生、设备、账号的配套维护。
+面向医养服务管理人员的课程项目。包含登录、首页、人口统计、健康检测统计、医生随访统计、腕表分布、电子围栏、轨迹回放和管理员数据模拟，并提供老人、医生、设备、账号的配套维护及真实设备 GPS 接入接口。
 
-技术采用 **Spring Boot 3.5.16、Spring MVC、Spring 事务、MyBatis、MyBatis-Plus 3.5.17、Vue 3、ECharts 6、MySQL 8.0、Maven Wrapper 3.9.16**。Java 编译目标为 17。后端 CRUD 使用 BaseMapper，聚合统计使用 Mapper XML。测试为 Boot BOM 管理的 JUnit 5，未引入 Spring Boot 4 或 JUnit 6。
+技术采用 **Spring Boot 3.5.16、Spring MVC、Spring 事务、MyBatis、MyBatis-Plus 3.5.17、Vue 3、Element Plus 2.14.5、MySQL 8.0、Maven Wrapper 3.9.16**。Java 编译目标为 17。前端数据模拟页实际使用 Element Plus，当前统计图继续使用 ECharts 6，但 ECharts 不是项目必选约束。后端 CRUD 使用 BaseMapper，聚合统计使用 Mapper XML。测试为 Boot BOM 管理的 JUnit 5，未引入 Spring Boot 4 或 JUnit 6。
 
 ## 文件入口
 
 - [文档交付索引](docs/README.md)：10 份 Word、1 份答辩 PPT。
 - [接口说明](docs/API.md)：权限、参数、响应与请求示例。
-- [数据库脚本](database/01-schema.sql)：16 张表与完整性约束。
+- [数据库脚本](database/01-schema.sql)：18 张表与完整性约束；已有 V1.0 库使用 [接入升级脚本](database/03-device-ingest-upgrade.sql)。
+- [腕表 GPS 接入指南](docs/DEVICE-INGEST.md)：设备密钥、批量定位、心跳与重试约定。
 - [部署说明源稿](docs/source/11-项目部署环境说明书.md)：环境、构建、启动与故障处理。
 - [实际测试证据](docs/evidence)：JUnit、HTTP、浏览器与性能记录。
 - [继续工作进度](PROGRESS.md)：已完成内容和尚待团队确认事项。
@@ -34,6 +35,8 @@ $env:APP_ADMIN_PASSWORD='填写至少12字符的初始管理员密码'
 .\scripts\start.ps1 -Profile demo -Port 8080
 ```
 
+`build.ps1` 默认执行 `npm ci`、Vue 生产构建、静态资源复制和 Maven 打包。跳过测试必须显式使用 `-SkipTests`。如已安装依赖且 Windows 上运行中的 Vite 锁定 `esbuild.exe`，可先停止该 Vite 进程，或确认 `package-lock.json` 未变化后使用 `-SkipNpmInstall`。
+
 **后端端口不是固定的 8080**：应用读取环境变量 `SERVER_PORT`（缺省 8080），`start.ps1` 的 `-Port` 参数设置的就是它。8080 被本机其他服务占用时，改传任意空闲端口即可（如 `-Port 8084`），浏览器打开对应的 `http://127.0.0.1:<端口>`。
 
 浏览器打开 `http://127.0.0.1:8080`。首次创建的管理员名为 `admin`，密码为自己设置的 `APP_ADMIN_PASSWORD`。demo 首次空库生成 `operator` 和 `analyst` 演示账号，初始密码相同；正式使用应分别修改。前台按 Ctrl+C 停止。
@@ -51,6 +54,8 @@ $env:APP_ADMIN_PASSWORD='填写至少12字符的初始管理员密码'
 `database/02-demo-data.sql` 提供固定日期的独立 SQL 种子，与 Java DemoSeeder **二选一**。只在全新空业务库导入；SQL 不含账号密码，后续普通启动由 Bootstrap 创建管理员，其他角色可由管理界面创建。种子日期靠近 2026-09-07，查询时选择相应日期。
 
 地图为 WGS84 离线坐标示意图，没有道路底图。设备在线由最近 5 分钟心跳判断，演示数据经过一段时间转为离线是预期行为。健康阈值仅用于教学演示。
+
+管理员登录 demo 环境后可使用“数据模拟”页面，手动注入单点，或生成直线、环形、越界返回轨迹；单批最多 500 点并可同时发送心跳。真实设备先由管理员在“腕表分布”签发独立接入密钥，再按 [接入指南](docs/DEVICE-INGEST.md) 上报。
 
 ## 开发与验证
 
@@ -83,13 +88,13 @@ python scripts/smoke_http.py --base-url http://127.0.0.1:18080 --env-file .local
 
 `browser-qa.mjs` 是开发验证脚本，需 Playwright、Chrome 和指向其包目录的 `RUNTIME_NODE_MODULES`。它们不是运行 JAR 的依赖。`performance_test.py` 和 `export_demo_sql.py` 明确绑定本任务隔离环境，不直接用于其他数据库。
 
-已记录：23 项 JUnit、16 项 HTTP、12 项浏览器检查通过；双十万数据量下 20 并发约 60 秒、2664 请求无错误、四端点 P95 均低于 2 秒。详细边界见测试日志，未声明覆盖所有浏览器表单提交、并发写入或生产环境。
+当前 Maven 回归共 28 项通过；V1.1 隔离 MySQL 验证了全新 18 表、16 表升级到 18 表、16 项基础 HTTP、5 项新增写路径和 4 项 Chrome 页面检查。原 V1.0 还完成双十万数据量下20并发约60秒、2664请求无错误、四端点 P95 均低于2秒。
 
 ## 角色与范围
 
 ADMIN 管理全部业务与账号；OPERATOR 维护业务；ANALYST 只读查询。后端执行权限检查，写接口使用 CSRF，密码使用 BCrypt。
 
-项目组四人为 A 项目经理兼测试、B 后端、C 后端兼数据、D 前端，姓名待填写。第一版不设独立 Agent 岗位。真实设备、短信、外部地图、多租户、临床诊断与公开部署均不属于本次课程版范围。
+项目组四人为 A 项目经理兼测试、B 后端、C 后端兼数据、D 前端，姓名待填写。第一版不设独立 Agent 岗位。短信、外部地图、多租户、临床诊断与公开部署不属于本次课程版范围；真实腕表已有通用 HTTP 接口，具体厂商协议适配仍需联调。
 
 ## 目录
 

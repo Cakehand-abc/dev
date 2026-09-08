@@ -1,0 +1,64 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Microsoft YaHei
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam packageBorderColor #294B63
+skinparam componentBorderColor #2F6F73
+skinparam componentBackgroundColor #EAF5F3
+skinparam databaseBorderColor #294B63
+skinparam ArrowColor #294B63
+top to bottom direction
+
+package "展示层  Vue 3 + Element Plus" {
+  [App.vue 页面工作台] as App
+  [Chart.vue\nECharts 当前图表实现] as Chart
+  [GeoCanvas.vue\n离线坐标画布] as GeoCanvas
+  [SimulationPanel.vue\n数据模拟] as Simulation
+  [api.js\n统一请求封装] as ApiJs
+  App --> Chart
+  App --> GeoCanvas
+  App --> Simulation
+  App --> ApiJs
+}
+
+package "访问与接口层  Spring MVC + Spring Security" {
+  [AuthController] as Auth
+  [CareController] as CareController
+  [DemoController] as DemoController
+  [DeviceIngestController] as DeviceController
+  [SecurityConfig] as Security
+}
+
+package "业务层  Spring Service + Transaction" {
+  [CareService] as CareService
+  [StatisticsService] as StatsService
+  [GeoService] as GeoService
+  [DeviceAccessService] as DeviceAccess
+}
+
+package "持久层  MyBatis-Plus + MyBatis XML" {
+  [17 个 BaseMapper] as BaseMapper
+  [StatisticsMapper.xml] as StatsMapper
+}
+
+database "MySQL 8\n18 张业务表" as MySQL
+
+ApiJs --> Security : 后台 Session + CSRF
+Security --> Auth
+Security --> CareController
+Security --> DemoController
+DeviceController --> DeviceAccess : X-Device-Key
+CareController --> CareService
+CareController --> StatsService
+CareController --> GeoService
+DemoController --> GeoService
+DeviceController --> GeoService
+CareService --> BaseMapper
+StatsService --> StatsMapper
+GeoService --> BaseMapper
+DeviceAccess --> BaseMapper
+BaseMapper --> MySQL
+StatsMapper --> MySQL
+@enduml
