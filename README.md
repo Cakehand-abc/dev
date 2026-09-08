@@ -34,6 +34,8 @@ $env:APP_ADMIN_PASSWORD='填写至少12字符的初始管理员密码'
 .\scripts\start.ps1 -Profile demo -Port 8080
 ```
 
+**后端端口不是固定的 8080**：应用读取环境变量 `SERVER_PORT`（缺省 8080），`start.ps1` 的 `-Port` 参数设置的就是它。8080 被本机其他服务占用时，改传任意空闲端口即可（如 `-Port 8084`），浏览器打开对应的 `http://127.0.0.1:<端口>`。
+
 浏览器打开 `http://127.0.0.1:8080`。首次创建的管理员名为 `admin`，密码为自己设置的 `APP_ADMIN_PASSWORD`。demo 首次空库生成 `operator` 和 `analyst` 演示账号，初始密码相同；正式使用应分别修改。前台按 Ctrl+C 停止。
 
 也可将四个私有配置项存为 JSON，使用 `-EnvironmentFile 私有文件路径`。`.env.example` 只是说明，应用不会自动加载 `.env`。已有账号库不会因环境变量变化而重置密码。
@@ -58,6 +60,8 @@ $env:APP_ADMIN_PASSWORD='填写至少12字符的初始管理员密码'
 .\mvnw.cmd spring-boot:run
 .\mvnw.cmd test
 ```
+
+`spring-boot:run` 不经过 `start.ps1`，按 `SERVER_PORT` 的缺省值 8080 启动；该端口被占用时先设置再运行，例如 `$env:SERVER_PORT='8084'`。
 
 前端独立运行：
 
