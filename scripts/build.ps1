@@ -1,4 +1,4 @@
-param([switch]$SkipTests)
+﻿param([switch]$SkipTests)
 $ErrorActionPreference = 'Stop'
 $careRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 Push-Location $careRoot

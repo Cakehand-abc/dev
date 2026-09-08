@@ -1,4 +1,4 @@
-param([string]$Profile='local',[int]$Port=8080,[string]$EnvironmentFile)
+﻿param([string]$Profile='local',[int]$Port=8080,[string]$EnvironmentFile)
 $ErrorActionPreference='Stop'
 $careRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 if($EnvironmentFile){
