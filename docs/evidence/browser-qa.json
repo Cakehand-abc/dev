@@ -1,0 +1,55 @@
+{
+  "runAt": "2026-09-08T01:24:43.102Z",
+  "browser": "152.0.7977.83",
+  "results": [
+    {
+      "page": "home",
+      "passed": true
+    },
+    {
+      "page": "population",
+      "passed": true
+    },
+    {
+      "page": "health",
+      "passed": true
+    },
+    {
+      "page": "followup",
+      "passed": true
+    },
+    {
+      "page": "devices",
+      "passed": true
+    },
+    {
+      "page": "fences",
+      "passed": true
+    },
+    {
+      "page": "trajectory",
+      "passed": true
+    },
+    {
+      "page": "doctors",
+      "passed": true
+    },
+    {
+      "page": "users",
+      "passed": true
+    },
+    {
+      "page": "elder-create-dialog",
+      "passed": true
+    },
+    {
+      "page": "mobile-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "page": "analyst-no-edit",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

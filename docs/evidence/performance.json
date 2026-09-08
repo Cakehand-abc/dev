@@ -1,0 +1,53 @@
+{
+  "runAt": "2026-09-08T00:28:53.434374+08:00",
+  "platform": "Windows-11-10.0.26100-SP0",
+  "cpuLogicalCount": 20,
+  "database": "MySQL 8.0.46 isolated 13316",
+  "java": "Zulu 25.0.1 / release 17",
+  "workers": 20,
+  "requestedSeconds": 60,
+  "before": "1080\t648",
+  "addedPerTable": 100000,
+  "conditions": "Default rolling 30 day range, first page size 20, no region filter. Synthetic rows spread over 27.8 hours. Read endpoints only; no write throughput claim.",
+  "during": "101080\t100648",
+  "elapsedSeconds": 60.371,
+  "endpoints": [
+    {
+      "path": "/health-records?size=20",
+      "samples": 662,
+      "p95Milliseconds": 363.27,
+      "meanMilliseconds": 207.61,
+      "errors": 0,
+      "passed": true
+    },
+    {
+      "path": "/statistics/health",
+      "samples": 665,
+      "p95Milliseconds": 386.37,
+      "meanMilliseconds": 238.0,
+      "errors": 0,
+      "passed": true
+    },
+    {
+      "path": "/dashboard",
+      "samples": 670,
+      "p95Milliseconds": 1104.8,
+      "meanMilliseconds": 806.21,
+      "errors": 0,
+      "passed": true
+    },
+    {
+      "path": "/devices/distribution",
+      "samples": 667,
+      "p95Milliseconds": 744.57,
+      "meanMilliseconds": 550.53,
+      "errors": 0,
+      "passed": true
+    }
+  ],
+  "totalRequests": 2664,
+  "errors": 0,
+  "passed": true,
+  "after": "1080\t648",
+  "cleanupVerified": true
+}

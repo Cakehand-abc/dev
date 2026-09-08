@@ -1,0 +1,85 @@
+{
+  "runAt": "2026-09-08T09:31:03.429658+08:00",
+  "baseUrl": "http://127.0.0.1:18080",
+  "results": [
+    {
+      "path": "/auth/me",
+      "passed": true,
+      "milliseconds": 15.45
+    },
+    {
+      "path": "/regions",
+      "passed": true,
+      "milliseconds": 15.43
+    },
+    {
+      "path": "/elders?size=10",
+      "passed": true,
+      "milliseconds": 17.43
+    },
+    {
+      "path": "/doctors?size=10",
+      "passed": true,
+      "milliseconds": 5.73
+    },
+    {
+      "path": "/health-records?size=10",
+      "passed": true,
+      "milliseconds": 30.2
+    },
+    {
+      "path": "/followup-plans?size=10",
+      "passed": true,
+      "milliseconds": 23.19
+    },
+    {
+      "path": "/devices/distribution",
+      "passed": true,
+      "milliseconds": 36.28
+    },
+    {
+      "path": "/geofences",
+      "passed": true,
+      "milliseconds": 29.73
+    },
+    {
+      "path": "/geofence-alerts?size=10",
+      "passed": true,
+      "milliseconds": 13.34
+    },
+    {
+      "path": "/statistics/population",
+      "passed": true,
+      "milliseconds": 19.14
+    },
+    {
+      "path": "/statistics/health",
+      "passed": true,
+      "milliseconds": 11.05
+    },
+    {
+      "path": "/statistics/followups",
+      "passed": true,
+      "milliseconds": 20.59
+    },
+    {
+      "path": "/dashboard",
+      "passed": true,
+      "milliseconds": 52.16
+    },
+    {
+      "path": "/users?size=10",
+      "passed": true,
+      "milliseconds": 23.35
+    },
+    {
+      "path": "/elders/{id}/trajectory",
+      "passed": true,
+      "points": 3
+    },
+    {
+      "path": "logout-session-invalidated",
+      "passed": true
+    }
+  ]
+}

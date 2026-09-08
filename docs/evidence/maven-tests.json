@@ -1,0 +1,146 @@
+{
+  "runDate": "2026年9月8日",
+  "java": "25.0.1",
+  "compilerRelease": 17,
+  "springBoot": "3.5.16",
+  "tests": [
+    {
+      "name": "duplicateBindingIsRejected",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.456,
+      "passed": true
+    },
+    {
+      "name": "completionIsAtomicAndCannotBeRepeated",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.029,
+      "passed": true
+    },
+    {
+      "name": "realLoginAndLogoutInvalidateSession",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.255,
+      "passed": true
+    },
+    {
+      "name": "productionDoesNotExposeDemoIngestion",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.022,
+      "passed": true
+    },
+    {
+      "name": "staleElderUpdateIsRejected",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.011,
+      "passed": true
+    },
+    {
+      "name": "paginationAndMassAssignmentAreRejected",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.025,
+      "passed": true
+    },
+    {
+      "name": "populationIncludesUnknownAndExcludesArchived",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.031,
+      "passed": true
+    },
+    {
+      "name": "duplicateAndOutOfOrderPointsDoNotCorruptMonitoring",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.041,
+      "passed": true
+    },
+    {
+      "name": "healthMissingMetricsAndFutureDataAreRejected",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.013,
+      "passed": true
+    },
+    {
+      "name": "trajectoryIsSortedAndRestricted",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.025,
+      "passed": true
+    },
+    {
+      "name": "healthCountsPeopleAndRecordsSeparately",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.016,
+      "passed": true
+    },
+    {
+      "name": "roleChangeInvalidatesExistingAuthentication",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.061,
+      "passed": true
+    },
+    {
+      "name": "anonymousCannotReadData",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.008,
+      "passed": true
+    },
+    {
+      "name": "distanceHasCorrectScale",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.011,
+      "passed": true
+    },
+    {
+      "name": "noPlansHaveNoArtificialCompletionRate",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.013,
+      "passed": true
+    },
+    {
+      "name": "heartbeatDoesNotMoveBackwards",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.01,
+      "passed": true
+    },
+    {
+      "name": "invalidPasswordIsRejected",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.061,
+      "passed": true
+    },
+    {
+      "name": "csrfAndReadOnlyRoleAreEnforced",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.066,
+      "passed": true
+    },
+    {
+      "name": "dashboardAndStatisticsContractsWork",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.026,
+      "passed": true
+    },
+    {
+      "name": "lastAdministratorCannotBeDisabled",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.006,
+      "passed": true
+    },
+    {
+      "name": "rebindingPreservesHistoricalOwner",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.013,
+      "passed": true
+    },
+    {
+      "name": "persistentOutsideOnlyCreatesOneAlertAndReturnAllowsAnother",
+      "class": "com.johnnylin.dev.BusinessTests",
+      "seconds": 0.029,
+      "passed": true
+    },
+    {
+      "name": "contextLoads",
+      "class": "com.johnnylin.dev.DevApplicationTests",
+      "seconds": 0.003,
+      "passed": true
+    }
+  ]
+}

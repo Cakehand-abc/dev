@@ -1,0 +1,15 @@
+{
+  "runAt": "2026-09-08T09:14:46.083393+08:00",
+  "database": "smart_care on isolated 13316, unique temporary table prefix verify_7d358b374e_",
+  "schemaTables": 16,
+  "firstImport": "passed",
+  "counts": {
+    "elders": 120,
+    "healthRecords": 1080,
+    "locationPoints": 648,
+    "users": 0
+  },
+  "secondImport": "rejected nonempty business tables",
+  "dataUnchanged": true,
+  "passed": true
+}

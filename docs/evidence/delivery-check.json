@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-09-08T09:31:53.713030",
+  "wordPages": 62,
+  "slides": 16,
+  "visualReview": "All pages and slides inspected. Database v4 unchanged pages pixel-compared against reviewed v3.",
+  "files": [
+    {
+      "file": "docs/deliverables/01 软件需求规范.docx",
+      "sha256": "35776ae0899af8820ab3023549a92ce57d52f8ad4729172bab9440d594a0c00e",
+      "bytes": 498091
+    },
+    {
+      "file": "docs/deliverables/02 数据库设计说明书.docx",
+      "sha256": "fc701982e0d12619841a368d748d0e5ec81aaa8d7cd81304fe637022c6d8b080",
+      "bytes": 506239
+    },
+    {
+      "file": "docs/deliverables/03 测试日志.docx",
+      "sha256": "81844cbf927895c8e3a9a0d51cb24d912574c7395bef0f8479fa449a808e6b1e",
+      "bytes": 496417
+    },
+    {
+      "file": "docs/deliverables/04 系统架构设计说明书.docx",
+      "sha256": "9ec7a97c7274607e80569b5fa2ebf26add4b871fe95cd47df1d207ccf6c225f9",
+      "bytes": 497253
+    },
+    {
+      "file": "docs/deliverables/05 测试用例.docx",
+      "sha256": "fef92a6257b11aecad1866b82138f637b203150b28bc768d835102ab9c5d0d20",
+      "bytes": 497478
+    },
+    {
+      "file": "docs/deliverables/06 测试计划.docx",
+      "sha256": "ad52590a6429559db592a5829207d5cb8f74c9847b06bd027a98814539519475",
+      "bytes": 495160
+    },
+    {
+      "file": "docs/deliverables/07 项目例会纪要.docx",
+      "sha256": "ffa4c2e413df7cd62f2e745a3ff5d8449e4870e0692cdf1ed6dbda36cd74fad9",
+      "bytes": 494959
+    },
+    {
+      "file": "docs/deliverables/08 系统详细设计说明书.docx",
+      "sha256": "35601a9f4772422d13c54fdb24bd1c761a5d57f631dd5ccd49fbef6bf6a2b3ae",
+      "bytes": 497865
+    },
+    {
+      "file": "docs/deliverables/09 项目答辩.pptx",
+      "sha256": "63b9421bc48cc3e4ba0fc8b3b154b132140a5e07154d6771fccab202d62917bb",
+      "bytes": 6356110
+    },
+    {
+      "file": "docs/deliverables/10 项目组成员分工.docx",
+      "sha256": "474ee10b556c5a06e54588299702ef0d1b7e95a0de58977a63ad3446022eb982",
+      "bytes": 495128
+    },
+    {
+      "file": "docs/deliverables/11 项目部署环境说明书.docx",
+      "sha256": "2918c59100ceec89b8adc60e0cb8f24da2954e642b95884bcd63f901b2726633",
+      "bytes": 498356
+    }
+  ]
+}

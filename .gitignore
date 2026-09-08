@@ -31,3 +31,35 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Frontend and private local configuration
+frontend/node_modules/
+frontend/dist/
+src/main/resources/static/
+.env
+.env.*
+!.env.example
+.local/
+*.log
+docs/.qa/
+
+# Local artifact packaging intermediates
+.chart-data-*/
+release/
+
+### Office and OS generated files ###
+~$*
+Thumbs.db
+desktop.ini
+.DS_Store
+
+### JVM crash logs ###
+hs_err_pid*
+replay_pid*
+
+### Python caches (scripts/) ###
+__pycache__/
+*.pyc
+
+### Local config overrides ###
+application-local.properties
