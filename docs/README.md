@@ -1,6 +1,6 @@
 # 项目文档交付索引
 
-2026-09-08，课程演示版 V1.1。八项业务功能、Element Plus 数据模拟、批量轨迹注入、受限删除、设备 GPS 接入、前后端代码、18 表 SQL、10 份 Word 和 16 页答辩 PPT 已完成。
+2026-09-09，课程演示版 V1.1。十项验收功能、Element Plus 数据模拟、批量轨迹注入、受限删除、设备 GPS 接入、前后端代码、18 表 SQL、10 份 Word 和 16 页答辩 PPT 已完成。
 
 | 文件 | 用途 |
 | --- | --- |
@@ -22,10 +22,10 @@
 - [Maven 28 项](evidence/maven-tests.json)、[V1.1 HTTP 基础 16 项](evidence/http-smoke-v11.json)、[新增写路径 5 项](evidence/v11-http-qa.json)、[Chrome 新功能 4 项](evidence/v11-browser-qa.json)和[MySQL 结构升级](evidence/mysql-v11-schema.json)均通过；V1.0 的[浏览器 12 项](evidence/browser-qa.json)与[窄屏设备详情](evidence/mobile-device-qa.json)继续保留为基线证据。
 - [性能实测](evidence/performance.json)：双十万数据，20 并发约 60 秒，2664 请求零错误，四端点 P95 均低于 2 秒。
 - [SQL 种子实测](evidence/sql-seed.json)：首次导入正确，非空业务表再次导入被拒绝。
-- PPT 已更新到 V1.1，共 16 页，保留可编辑表格和图表，并通过[包结构、版式和字体检查](evidence/presentation-v11-validation.json)及逐页渲染复核。Word 已更新到 V1.1 并通过 [OOXML 包、正文和表格结构校验](evidence/document-v11-structural-qa.json)；本次运行环境缺少 LibreOffice/Word，V1.1 页面级渲染检查需在具备 Office 渲染器的电脑补做。
+- PPT 已更新到 V1.1，共 16 页，保留可编辑表格和图表，并通过[包结构、版式和字体检查](evidence/presentation-template-validation.json)及 16 页逐页渲染复核。Word 已更新到 V1.1 并通过 [OOXML 结构校验和 91 页渲染复核](evidence/document-v11-structural-qa.json)。[报告差异、Agent 边界和架构图清单](项目报告一致性与架构图清单.md)记录了本次模板核对结论。
 
 ## 团队补充事项
 
-成员姓名、学号、实际例会信息与验收签字需要团队填写。测试 JVM 实际为 Zulu 25.0.1、编译目标 17，团队 JDK 17 与 IDEA 内置 JUnit 尚未实测。地图为无道路底图的离线坐标画布，数据均为虚构；GPS 接口已实现通用 HTTP 协议，但真实腕表协议适配和现场联调仍需具体硬件资料。公开部署与备份恢复演练未执行。
+成员和学号已按四份实训报告统一，实际例会信息与验收签字仍需团队按事实填写。测试 JVM 实际为 Zulu 25.0.1、编译目标 17；本机已识别 IDEA 2024.3.4，团队使用 JDK 17 的 IDEA 内置 JUnit 运行仍需补录。地图为无道路底图的离线坐标画布，数据均为虚构；GPS 接口已实现通用 HTTP 协议，但真实腕表协议适配和现场联调仍需具体硬件资料。公开部署与备份恢复演练未执行。
 
 `source/` 是可编辑内容源稿。`review/` 保留早期评审历史，当前实现以本索引、交付文件和代码为准。文档生成脚本依赖本次模板及制作运行环境，应用构建和运行不依赖这些工具。

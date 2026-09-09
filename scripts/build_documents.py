@@ -15,7 +15,7 @@ from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT, WD_R
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'docs/deliverables';OUT.mkdir(parents=True,exist_ok=True)
 SOURCE=ROOT/'docs/source';SOURCE.mkdir(exist_ok=True)
-DATE='2026年9月8日';PROJECT='智慧医养大数据决策分析系统';VERSION='V1.1'
+DATE='2026年9月9日';PROJECT='智慧医养大数据决策分析系统';VERSION='V1.1'
 PROJECT_NO='SC-2026-01'
 DEPARTMENT='软件工程项目组'
 MEMBERS={
@@ -320,13 +320,15 @@ def add_figure(doc,path,caption,width):
 def build(spec):
  doc=Document();configure_document(doc);add_cover(doc,spec);add_control_pages(doc,spec)
  for page in spec['pages']:
-  doc.add_page_break()
+  first_block=True
   for block in page:
    if block[0]=='h':
     p=paragraph(doc,block[1],'Heading 1',16,bold=True,east_asia='黑体');p.paragraph_format.space_before=Pt(8);p.paragraph_format.space_after=Pt(7);p.paragraph_format.keep_with_next=True
+    if first_block:p.paragraph_format.page_break_before=True
    elif block[0]=='p':paragraph(doc,block[1])
    elif block[0]=='t':table(doc,block[1],block[2])
    elif block[0]=='img':add_figure(doc,block[1],block[2],block[3])
+   first_block=False
  doc.core_properties.title=PROJECT+' '+spec['title'];doc.core_properties.author='智慧医养项目组';doc.core_properties.subject=spec['scope'];doc.core_properties.comments='依据用户提供的三创谷格式模板重排，内容以当前仓库实现和验证证据为准。'
  out=OUT/(spec['number']+' '+spec['title']+'.docx');doc.save(out)
  md=['# '+spec['title'],'版本 '+VERSION+'　'+DATE]

@@ -11,6 +11,8 @@
 - [数据库脚本](database/01-schema.sql)：18 张表与完整性约束；已有 V1.0 库使用 [接入升级脚本](database/03-device-ingest-upgrade.sql)。
 - [腕表 GPS 接入指南](docs/DEVICE-INGEST.md)：设备密钥、批量定位、心跳与重试约定。
 - [部署说明源稿](docs/source/11-项目部署环境说明书.md)：环境、构建、启动与故障处理。
+- [报告一致性与架构图清单](docs/项目报告一致性与架构图清单.md)：四份实训报告差异、Agent 边界、模板图类型及模块映射。
+- [IDEA 可预览架构图源](docs/diagrams/README.md)：7 张 PlantUML 图和同源 PNG。
 - [实际测试证据](docs/evidence)：JUnit、HTTP、浏览器与性能记录。
 - [继续工作进度](PROGRESS.md)：已完成内容和尚待团队确认事项。
 
@@ -94,7 +96,7 @@ python scripts/smoke_http.py --base-url http://127.0.0.1:18080 --env-file .local
 
 ADMIN 管理全部业务与账号；OPERATOR 维护业务；ANALYST 只读查询。后端执行权限检查，写接口使用 CSRF，密码使用 BCrypt。
 
-项目组四人为 A 项目经理兼测试、B 后端、C 后端兼数据、D 前端，姓名待填写。第一版不设独立 Agent 岗位。短信、外部地图、多租户、临床诊断与公开部署不属于本次课程版范围；真实腕表已有通用 HTTP 接口，具体厂商协议适配仍需联调。
+项目组四人为：周虹宏（项目经理兼测试负责人）、钟毓林（后端工程师）、胡吉涵（后端兼数据工程师）、李治宏（前端工程师）。当前版本不设独立 Agent 岗位。短信、外部地图、多租户、临床诊断与公开部署不属于本次课程版范围；真实腕表已有通用 HTTP 接口，具体厂商协议适配仍需联调。
 
 ## 目录
 

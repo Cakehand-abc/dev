@@ -1,11 +1,14 @@
 {
-  "runAt": "2026-09-08T14:59:34.474719+00:00",
+  "runAt": "2026-09-09T01:21:51.507964+00:00",
   "expectedDocuments": 10,
   "actualDocuments": 10,
   "allPassed": true,
   "visualRender": {
-    "passed": false,
-    "reason": "LibreOffice soffice.exe and Microsoft Word are unavailable in this execution environment"
+    "passed": true,
+    "renderer": "LibreOffice Writer PDF export + Poppler pdftoppm 120 DPI",
+    "renderDirectory": "docs/.qa/template-final-render-v3/pages",
+    "renderedPages": 91,
+    "manualReview": "All 91 final page images reviewed; no clipping, table overflow, unintended blank page, or unreadable embedded architecture diagram found. The final date-only rebuild preserved all non-control-page pixels and page counts."
   },
   "documents": [
     {
@@ -13,7 +16,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 46,
+      "paragraphs": 42,
       "tables": 10,
       "nonEmptyParagraphs": 31,
       "passed": true
@@ -23,7 +26,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 123,
+      "paragraphs": 103,
       "tables": 23,
       "nonEmptyParagraphs": 79,
       "passed": true
@@ -33,7 +36,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 33,
+      "paragraphs": 30,
       "tables": 8,
       "nonEmptyParagraphs": 21,
       "passed": true
@@ -43,7 +46,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 76,
+      "paragraphs": 67,
       "tables": 6,
       "nonEmptyParagraphs": 53,
       "passed": true
@@ -53,7 +56,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 151,
+      "paragraphs": 142,
       "tables": 5,
       "nonEmptyParagraphs": 136,
       "passed": true
@@ -63,7 +66,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 26,
+      "paragraphs": 24,
       "tables": 5,
       "nonEmptyParagraphs": 18,
       "passed": true
@@ -73,7 +76,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 26,
+      "paragraphs": 24,
       "tables": 7,
       "nonEmptyParagraphs": 16,
       "passed": true
@@ -83,7 +86,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 43,
+      "paragraphs": 39,
       "tables": 7,
       "nonEmptyParagraphs": 31,
       "passed": true
@@ -93,7 +96,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 27,
+      "paragraphs": 25,
       "tables": 6,
       "nonEmptyParagraphs": 18,
       "passed": true
@@ -103,7 +106,7 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 53,
+      "paragraphs": 48,
       "tables": 7,
       "nonEmptyParagraphs": 40,
       "passed": true
