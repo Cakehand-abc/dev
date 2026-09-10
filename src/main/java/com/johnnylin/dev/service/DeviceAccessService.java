@@ -1,55 +1,32 @@
 package com.johnnylin.dev.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.johnnylin.dev.common.Api;
-import com.johnnylin.dev.domain.DeviceCredential;
-import com.johnnylin.dev.mapper.DeviceCredentialMapper;
-import com.johnnylin.dev.mapper.DeviceMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
 
-import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.time.LocalDateTime;
-import java.util.*;
+/**
+ * 智能设备边缘接入凭据管理与无状态认证服务接口。
+ *
+ * <p>核心职责包括：
+ * <ul>
+ *   <li>为穿戴设备安全生成与轮转 256 位加密随机 API 密钥（带 {@code scd_} 前缀）</li>
+ *   <li>在服务端仅存储密钥的 SHA-256 哈希值，防止数据库泄露导致密钥被利用</li>
+ *   <li>对设备上报请求进行时间常数级（Constant-Time）哈希比对校验，防御侧信道时序攻击</li>
+ * </ul>
+ */
+public interface DeviceAccessService {
 
-import static com.johnnylin.dev.common.Input.now;
-import static com.johnnylin.dev.service.CareService.required;
+    /**
+     * 为指定穿戴设备生成或轮转重置接入 API 密钥。
+     *
+     * @param deviceId 设备主键 ID
+     * @return 包含 deviceId、serialNo、apiKey（明文密钥）及 issuedAt 的响应 Map
+     */
+    Map<String, Object> rotate(Long deviceId);
 
-@Service
-@RequiredArgsConstructor
-public class DeviceAccessService {
-    private final DeviceCredentialMapper credentials;
-    private final DeviceMapper devices;
-    private final GeoService geo;
-    private final SecureRandom random = new SecureRandom();
-
-    @Transactional
-    public Map<String,Object> rotate(Long deviceId) {
-        var device=required(devices.selectById(deviceId));
-        if(!device.getEnabled()) throw Api.conflict("设备已停用，不能生成接入密钥");
-        byte[] bytes=new byte[32];random.nextBytes(bytes);
-        String secret="scd_"+Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-        var current=credentials.selectById(deviceId);LocalDateTime stamp=now();boolean creating=current==null;
-        if(creating){current=new DeviceCredential();current.setDeviceId(deviceId);current.setCreatedAt(stamp);}
-        else current.setRotatedAt(stamp);
-        current.setKeyHash(hash(secret));
-        if(creating)credentials.insert(current);else credentials.updateById(current);
-        geo.auditDeviceAction("ROTATE_CREDENTIAL",deviceId);
-        return new LinkedHashMap<>(Map.of("deviceId",deviceId,"serialNo",device.getSerialNo(),"apiKey",secret,"issuedAt",stamp));
-    }
-
-    public void authenticate(Long deviceId,String secret) {
-        if(secret==null||secret.length()<20||secret.length()>200)throw unauthorized();
-        var credential=credentials.selectOne(new QueryWrapper<DeviceCredential>().eq("device_id",deviceId));
-        if(credential==null||!MessageDigest.isEqual(credential.getKeyHash().getBytes(StandardCharsets.US_ASCII),hash(secret).getBytes(StandardCharsets.US_ASCII)))throw unauthorized();
-        var device=devices.selectById(deviceId);if(device==null||!device.getEnabled())throw unauthorized();
-    }
-
-    private static String hash(String value) {
-        try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8)));}
-        catch(NoSuchAlgorithmException e){throw new IllegalStateException(e);}
-    }
-    private static Api.Failure unauthorized(){return new Api.Failure(401,"设备接入凭据无效");}
+    /**
+     * 校验设备端上传数据时的 API 密钥与可用状态。
+     *
+     * @param deviceId 设备主键 ID
+     * @param secret 设备在 Header {@code X-Device-Key} 中携带的明文密钥
+     */
+    void authenticate(Long deviceId, String secret);
 }
