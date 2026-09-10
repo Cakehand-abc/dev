@@ -120,17 +120,25 @@ public class SecurityConfig {
      * @param users 系统用户持久层 Mapper
      * @param contexts 安全上下文仓库
      * @param csrf CSRF 令牌仓库
+     * @param tokenFilter 分布式 Token 认证过滤器
      * @return 构建就绪的 SecurityFilterChain
      * @throws Exception 当安全链配置异常时抛出
      */
     @Bean
-    SecurityFilterChain chain(HttpSecurity http, UserMapper users, SecurityContextRepository contexts, CsrfTokenRepository csrf) throws Exception {
+    SecurityFilterChain chain(HttpSecurity http, UserMapper users, SecurityContextRepository contexts,
+                             CsrfTokenRepository csrf, TokenAuthenticationFilter tokenFilter) throws Exception {
         http.securityContext(c -> c.securityContextRepository(contexts))
-            // 针对 IoT 边缘设备端数据上报接口关闭 CSRF 防护，其余管理端接口强制启用
-            .csrf(c -> c.csrfTokenRepository(csrf).ignoringRequestMatchers("/api/device/**"))
+            // 针对 IoT 边缘设备端、刷新令牌端点及携带 Bearer Token 的 API 请求关闭 CSRF 防护，其余基于 Cookie 的管理端接口强制启用
+            .csrf(c -> c.csrfTokenRepository(csrf)
+                .ignoringRequestMatchers("/api/device/**", "/api/v1/auth/refresh")
+                .ignoringRequestMatchers(request -> {
+                    String auth = request.getHeader("Authorization");
+                    return auth != null && auth.regionMatches(true, 0, "Bearer ", 0, 7);
+                }))
             .authorizeHttpRequests(a -> a
-                // 静态资源与登录/CSRF免密端点放行
-                .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg", "/api/v1/auth/csrf", "/api/v1/auth/login", "/error").permitAll()
+                // 静态资源与登录/刷新/CSRF/登出免密端点放行
+                .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg",
+                        "/api/v1/auth/csrf", "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/auth/logout", "/error").permitAll()
                 // IoT 边缘设备数据直传端点（基于设备 Key 自定义认证）
                 .requestMatchers("/api/device/**").permitAll()
                 // 敏感破坏性操作：删除老人档案仅限 ADMIN
@@ -139,8 +147,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/users/**", "/api/v1/demo/**", "/api/v1/devices/*/credential").hasRole("ADMIN")
                 // 只读查询接口允许所有已认证用户（含 ANALYST）
                 .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
-                // 退出登录端点需已认证
-                .requestMatchers("/api/v1/auth/logout").authenticated()
                 // 业务写操作限制为 ADMIN 与 OPERATOR 角色
                 .requestMatchers("/api/**").hasAnyRole("ADMIN", "OPERATOR")
                 // 其余任何未显式声明的请求一律拒绝
@@ -153,6 +159,9 @@ public class SecurityConfig {
             .logout(l -> l.disable())
             .requestCache(c -> c.disable());
 
+        // 挂载 Token 认证解析过滤器（优先从 Redis 中解析 Bearer 令牌注入上下文）
+        http.addFilterBefore(tokenFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+
         // 挂载账号凭据版本与状态检查拦截过滤器，确保密码重置或角色变更后即时使老旧会话失效
         http.addFilterBefore(new OncePerRequestFilter() {
             @Override
@@ -161,7 +170,7 @@ public class SecurityConfig {
                 if (auth != null && auth.getPrincipal() instanceof AccountPrincipal p) {
                     User current = users.selectById(p.id());
                     // 若账号已不存在、被禁用，或内部安全版本号不一致，立即清理会话并拒绝请求
-                    if (current == null || !current.getEnabled() || current.getAuthVersion() != p.authVersion()) {
+                    if (current == null || !Boolean.TRUE.equals(current.getEnabled()) || current.getAuthVersion() != p.authVersion()) {
                         SecurityContextHolder.clearContext();
                         if (req.getSession(false) != null) {
                             req.getSession(false).invalidate();

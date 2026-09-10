@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent } from 'vue'
-import { api, refreshCsrf } from './api'
+import { api, refreshCsrf, setTokens, clearTokens, getTokens } from './api'
 import Chart from './components/Chart.vue'
 import GeoCanvas from './components/GeoCanvas.vue'
 const SimulationPanel = defineAsyncComponent(() => import('./components/SimulationPanel.vue'))
@@ -57,11 +57,82 @@ function navigate(id) { page.value = id; location.hash = id }
 watch(page, () => { pageNo.value = 1; alertPage.value = 1; filters.status = ''; search.value = ''; selectedDevice.value = null; rows.value = []; summary.value = {}; load() })
 function applyFilters() { pageNo.value = 1; alertPage.value = 1; load() }
 function resetFilters() { Object.assign(filters, { regionId: '', startDate: localDate(-29), endDate: localDate(), doctorId: '', abnormal: '', status: '' }); search.value = ''; applyFilters() }
-async function login() { loginBusy.value = true; await safe(async () => { await refreshCsrf(); me.value = await api('/auth/login', { method: 'POST', data: { username: username.value, password: password.value } }); password.value = ''; await refreshCsrf(); if (page.value === 'users' && me.value.role !== 'ADMIN') page.value = 'home'; await loadRefs(); await load() }); loginBusy.value = false }
-async function logout() { await safe(async () => { await api('/auth/logout', { method: 'POST' }); me.value = null; serial++; points.value = []; rows.value = []; summary.value = {}; await refreshCsrf() }) }
-function expire() { me.value = null; serial++; playing.value = false; error.value = '会话已失效，请重新登录' }
-function hashChange() { const route = location.hash.slice(1); if (visibleMenus.value.some(m => m.id === route)) page.value = route }
-onMounted(async () => { window.addEventListener('session-expired', expire); window.addEventListener('hashchange', hashChange); await safe(async () => { await refreshCsrf(); try { me.value = await api('/auth/me') } catch (e) { if (e.status !== 401) throw e } if (me.value) { if (!visibleMenus.value.some(m => m.id === page.value)) page.value = 'home'; await loadRefs(); await load() } }); ready.value = true; timer = setInterval(() => { if (playing.value && index.value < points.value.length - 1) index.value = Math.min(points.value.length - 1, index.value + Number(speed.value)); else playing.value = false }, 500) })
+async function login() {
+  loginBusy.value = true
+  await safe(async () => {
+    await refreshCsrf()
+    const res = await api('/auth/login', {
+      method: 'POST',
+      data: { username: username.value, password: password.value }
+    })
+    if (res?.accessToken) {
+      setTokens(res)
+    }
+    me.value = res?.user || res
+    password.value = ''
+    await refreshCsrf()
+    if (page.value === 'users' && me.value.role !== 'ADMIN') page.value = 'home'
+    await loadRefs()
+    await load()
+  })
+  loginBusy.value = false
+}
+
+async function logout() {
+  await safe(async () => {
+    const { refreshToken } = getTokens()
+    await api('/auth/logout', { method: 'POST', data: { refreshToken } }).catch(() => {})
+    clearTokens()
+    me.value = null
+    serial++
+    points.value = []
+    rows.value = []
+    summary.value = {}
+    await refreshCsrf()
+  })
+}
+
+function expire() {
+  clearTokens()
+  me.value = null
+  serial++
+  playing.value = false
+  error.value = '会话已失效，请重新登录'
+}
+
+function hashChange() {
+  const route = location.hash.slice(1)
+  if (visibleMenus.value.some(m => m.id === route)) page.value = route
+}
+
+onMounted(async () => {
+  window.addEventListener('session-expired', expire)
+  window.addEventListener('hashchange', hashChange)
+  await safe(async () => {
+    const { accessToken, refreshToken } = getTokens()
+    if (accessToken || refreshToken) {
+      try {
+        me.value = await api('/auth/me')
+      } catch (e) {
+        if (e.status !== 401) throw e
+      }
+    } else {
+      await refreshCsrf()
+    }
+    if (me.value) {
+      if (!visibleMenus.value.some(m => m.id === page.value)) page.value = 'home'
+      await loadRefs()
+      await load()
+    }
+  })
+  ready.value = true
+  timer = setInterval(() => {
+    if (playing.value && index.value < points.value.length - 1)
+      index.value = Math.min(points.value.length - 1, index.value + Number(speed.value))
+    else
+      playing.value = false
+  }, 500)
+})
 onBeforeUnmount(() => { clearInterval(timer); window.removeEventListener('session-expired', expire); window.removeEventListener('hashchange', hashChange) })
 
 const modal = ref(), modalTitle = ref(''), form = reactive({}), fields = ref([]), saving = ref(false)

@@ -182,6 +182,55 @@ class BusinessTests {
     }
 
     /**
+     * 测试基于 Redis 的双 Token（AccessToken + RefreshToken）生命周期与无感刷新机制。
+     *
+     * @throws Exception MockMvc 执行异常
+     */
+    @Test
+    void doubleTokenLifecycleAndRefresh() throws Exception {
+        var loginResult = mvc.perform(post("/api/v1/auth/login")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"admin\",\"password\":\"TestAdmin!2026\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.data.refreshToken").isNotEmpty())
+                .andReturn();
+
+        var data = json.readTree(loginResult.getResponse().getContentAsString()).get("data");
+        String accessToken = data.get("accessToken").asText();
+        String refreshToken = data.get("refreshToken").asText();
+
+        // 验证凭借 Bearer AccessToken 可以直接访问受保护端点（无需 Session 与 CSRF）
+        mvc.perform(get("/api/v1/auth/me")
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.username").value("admin"));
+
+        // 验证凭借 RefreshToken 可以置换新的 AccessToken
+        var refreshResult = mvc.perform(post("/api/v1/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"refreshToken\":\"" + refreshToken + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
+                .andReturn();
+
+        String newAccessToken = json.readTree(refreshResult.getResponse().getContentAsString()).get("data").get("accessToken").asText();
+        assertThat(newAccessToken).isNotBlank();
+
+        // 验证新 AccessToken 可以正常发起业务请求
+        mvc.perform(get("/api/v1/elders")
+                .header("Authorization", "Bearer " + newAccessToken))
+                .andExpect(status().isOk());
+
+        // 验证非法/已注销的 RefreshToken 无法刷新
+        mvc.perform(post("/api/v1/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"refreshToken\":\"invalid-token-123456\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    /**
      * 测试系统对 CSRF 令牌及只读分析员角色的写操作拦截。
      *
      * @throws Exception MockMvc 执行异常

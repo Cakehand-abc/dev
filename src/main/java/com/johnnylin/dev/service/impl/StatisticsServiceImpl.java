@@ -146,11 +146,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     public Map<String, Object> health(Long region, String start, String end) {
         var p = filters(region, start, end, null, null);
 
-        // 1. 综合受检与异常指标：使用 MPJ 连表
+        // 1. 综合指标汇总：使用 MPJ 连表
         MPJLambdaWrapper<HealthRecord> summaryWrapper = new MPJLambdaWrapper<HealthRecord>()
-                .selectCount(HealthRecord::getId, "measurements")
+                .select("COUNT(*) AS measurements")
                 .select("COUNT(DISTINCT t.elder_id) AS people")
                 .select("COUNT(DISTINCT CASE WHEN t.abnormal = TRUE THEN t.elder_id END) AS abnormalPeople")
+                .select("COALESCE(SUM(CASE WHEN t.abnormal = TRUE THEN 1 ELSE 0 END), 0) AS abnormalRecords")
                 .innerJoin(Elder.class, Elder::getId, HealthRecord::getElderId)
                 .ge(HealthRecord::getMeasuredAt, p.get("start"))
                 .lt(HealthRecord::getMeasuredAt, p.get("end"));
@@ -159,22 +160,22 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         Map<String, Object> summary = healthRecordMapper.selectJoinMap(summaryWrapper);
         if (summary == null) {
-            summary = new LinkedHashMap<>(Map.of("measurements", 0L, "people", 0L, "abnormalPeople", 0L));
+            summary = new LinkedHashMap<>(Map.of("measurements", 0L, "people", 0L, "abnormalPeople", 0L, "abnormalRecords", 0L));
         }
 
-        // 2. 按天聚合测量趋势：使用 MPJ 连表
+        // 2. 按天趋势折线：使用 MPJ 连表，使用 MySQL 与 H2 均完全兼容的标准 CAST AS DATE
         MPJLambdaWrapper<HealthRecord> trendWrapper = new MPJLambdaWrapper<HealthRecord>()
-                .select("FORMATDATETIME(t.measured_at, 'yyyy-MM-dd') AS `day`")
-                .selectCount(HealthRecord::getId, "measurements")
-                .select("COUNT(DISTINCT CASE WHEN t.abnormal = TRUE THEN t.elder_id END) AS abnormalPeople")
+                .select("CAST(t.measured_at AS DATE) AS name")
+                .select("COUNT(*) AS `value`")
+                .select("COALESCE(SUM(CASE WHEN t.abnormal = TRUE THEN 1 ELSE 0 END), 0) AS abnormal")
                 .innerJoin(Elder.class, Elder::getId, HealthRecord::getElderId)
                 .ge(HealthRecord::getMeasuredAt, p.get("start"))
                 .lt(HealthRecord::getMeasuredAt, p.get("end"));
         if (p.get("regionId") != null) {
             trendWrapper.eq(Elder::getRegionId, p.get("regionId"));
         }
-        trendWrapper.groupBy("FORMATDATETIME(t.measured_at, 'yyyy-MM-dd')")
-                .orderByAsc("`day`");
+        trendWrapper.groupBy("CAST(t.measured_at AS DATE)")
+                .orderByAsc("CAST(t.measured_at AS DATE)");
         List<Map<String, Object>> trendList = healthRecordMapper.selectJoinMaps(trendWrapper);
 
         return Map.of(
