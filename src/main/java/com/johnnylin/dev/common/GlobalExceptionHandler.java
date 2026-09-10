@@ -1,7 +1,6 @@
 package com.johnnylin.dev.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -29,10 +28,9 @@ import java.util.UUID;
  *   <li>未预期的系统兜底异常：记录错误日志并返回 500 友好提示，附带链路跟踪 ID</li>
  * </ul>
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 构造标准 JSON 错误响应体。

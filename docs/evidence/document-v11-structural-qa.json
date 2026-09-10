@@ -1,5 +1,5 @@
 {
-  "runAt": "2026-09-09T01:21:51.507964+00:00",
+  "runAt": "2026-09-10T08:45:20.058312+00:00",
   "expectedDocuments": 10,
   "actualDocuments": 10,
   "allPassed": true,
@@ -16,9 +16,9 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 42,
+      "paragraphs": 44,
       "tables": 10,
-      "nonEmptyParagraphs": 31,
+      "nonEmptyParagraphs": 33,
       "passed": true
     },
     {
@@ -26,9 +26,9 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 103,
-      "tables": 23,
-      "nonEmptyParagraphs": 79,
+      "paragraphs": 96,
+      "tables": 22,
+      "nonEmptyParagraphs": 73,
       "passed": true
     },
     {
@@ -36,8 +36,8 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 30,
-      "tables": 8,
+      "paragraphs": 29,
+      "tables": 7,
       "nonEmptyParagraphs": 21,
       "passed": true
     },
@@ -46,9 +46,9 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 67,
-      "tables": 6,
-      "nonEmptyParagraphs": 53,
+      "paragraphs": 47,
+      "tables": 4,
+      "nonEmptyParagraphs": 35,
       "passed": true
     },
     {
@@ -56,9 +56,9 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 142,
+      "paragraphs": 169,
       "tables": 5,
-      "nonEmptyParagraphs": 136,
+      "nonEmptyParagraphs": 163,
       "passed": true
     },
     {
@@ -66,8 +66,8 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 24,
-      "tables": 5,
+      "paragraphs": 26,
+      "tables": 7,
       "nonEmptyParagraphs": 18,
       "passed": true
     },
@@ -76,9 +76,9 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 24,
-      "tables": 7,
-      "nonEmptyParagraphs": 16,
+      "paragraphs": 22,
+      "tables": 8,
+      "nonEmptyParagraphs": 13,
       "passed": true
     },
     {
@@ -86,9 +86,9 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 39,
-      "tables": 7,
-      "nonEmptyParagraphs": 31,
+      "paragraphs": 34,
+      "tables": 6,
+      "nonEmptyParagraphs": 27,
       "passed": true
     },
     {
@@ -106,9 +106,9 @@
       "zipValid": true,
       "hasMainDocument": true,
       "versionV11Present": true,
-      "paragraphs": 48,
-      "tables": 7,
-      "nonEmptyParagraphs": 40,
+      "paragraphs": 37,
+      "tables": 6,
+      "nonEmptyParagraphs": 30,
       "passed": true
     }
   ]

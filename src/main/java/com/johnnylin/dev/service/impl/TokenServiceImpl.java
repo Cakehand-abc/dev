@@ -9,8 +9,7 @@ import com.johnnylin.dev.common.Api;
 import com.johnnylin.dev.domain.User;
 import com.johnnylin.dev.mapper.UserMapper;
 import com.johnnylin.dev.service.TokenService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +27,9 @@ import java.util.concurrent.TimeUnit;
  *   <li>通过比对 DB 端的 {@code authVersion} 与 {@code enabled} 保证账号被禁用或修改密码时能即时作废</li>
  * </ul>
  */
+@Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
-
-    private static final Logger log = LoggerFactory.getLogger(TokenServiceImpl.class);
 
     public static final String ACCESS_TOKEN_PREFIX = "login:access:";
     public static final String REFRESH_TOKEN_PREFIX = "login:refresh:";
