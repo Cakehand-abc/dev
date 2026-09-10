@@ -38,6 +38,8 @@ frontend/dist/
 src/main/resources/static/
 .env
 .env.*
+**/.env
+**/.env.*
 !.env.example
 .local/
 *.log

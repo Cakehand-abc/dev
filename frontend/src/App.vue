@@ -3,6 +3,7 @@ import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick, d
 import { api, refreshCsrf, setTokens, clearTokens, getTokens } from './api'
 import Chart from './components/Chart.vue'
 import GeoCanvas from './components/GeoCanvas.vue'
+import AiAssistantOrb from './components/AiAssistantOrb.vue'
 const SimulationPanel = defineAsyncComponent(() => import('./components/SimulationPanel.vue'))
 
 const menus = [{ id: 'home', label: '首页总览', icon: '◈' }, { id: 'population', label: '人口信息分析', icon: '◷' }, { id: 'health', label: '健康检测分析', icon: '♡' }, { id: 'followup', label: '医生随访分析', icon: '▤' }, { id: 'devices', label: '腕表分布', icon: '⌖' }, { id: 'fences', label: '电子围栏', icon: '◎' }, { id: 'trajectory', label: '轨迹回放', icon: '↝' }, { id: 'simulation', label: '数据模拟', icon: '⌁' }, { id: 'doctors', label: '医生管理', icon: '✚' }, { id: 'users', label: '账号管理', icon: '⚙' }]
@@ -229,4 +230,6 @@ function showRecord(row) { detailTitle.value = row.elderName + ' · 随访记录
   <dialog ref="confirmation" class="form-dialog compact"><div class="dialog-header"><h2>确认操作</h2></div><div class="dialog-body"><p>{{ confirmMessage }}</p><div v-if="error" class="message error">{{ error }}</div></div><div class="dialog-actions"><button class="secondary" :disabled="saving" @click="confirmation.close()">取消</button><button class="primary" :disabled="saving" @click="executeConfirmed">确认</button></div></dialog>
   <dialog ref="credentialDialog" class="form-dialog compact"><div class="dialog-header"><h2>设备接入密钥</h2><button class="close-button" aria-label="关闭" @click="credentialDialog.close()">×</button></div><div class="dialog-body"><p>密钥仅显示一次，请立即保存到设备或安全配置中。再次生成会使旧密钥失效。</p><label>设备<span class="mono">{{ credentialResult?.serialNo }}</span></label><label>接入密钥<textarea class="mono" readonly :value="credentialResult?.apiKey" rows="3"></textarea></label></div><div class="dialog-actions"><button class="primary" @click="credentialDialog.close()">我已保存</button></div></dialog>
   <dialog ref="detail" class="form-dialog detail-dialog"><div class="dialog-header"><h2>{{ detailTitle }}</h2><button class="close-button" aria-label="关闭" @click="detail.close()">×</button></div><div class="dialog-body"><template v-if="detailRecord"><dl><dt>完成时间</dt><dd>{{ fmt(detailRecord.completedAt) }}</dd><dt>随访内容</dt><dd>{{ detailRecord.content }}</dd><dt>随访结果</dt><dd>{{ detailRecord.result }}</dd></dl></template><template v-else><label>检测指标<select v-model="metric" @change="loadTrend"><option value="systolic">收缩压 mmHg</option><option value="diastolic">舒张压 mmHg</option><option value="heartRate">心率 次/分</option><option value="oxygen">血氧 %</option><option value="temperature">体温 ℃</option></select></label><Chart title="单项指标趋势" type="line" :rows="detailTrend"/></template></div></dialog>
+  <!-- 智慧医养 AI 专属健康守护悬浮球与对话工作台 -->
+  <AiAssistantOrb />
 </template>
